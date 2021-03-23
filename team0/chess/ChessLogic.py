@@ -23,6 +23,7 @@ class Board():
         # TODO: initialize with all zeros
         board_arr = np.zeros(64)
         fen = self.board.fen()
+        print(fen)
 
         piece_dict = {
             "p": chess.PAWN,
@@ -42,16 +43,18 @@ class Board():
         arrayIndex = 0
         stringIndex = 0
         while arrayIndex < 64:
-            currentPiece = fen[arrayIndex]
-            if currentPiece.isDigit():
+            currentPiece = fen[stringIndex]
+            print(currentPiece)
+            if currentPiece.isdigit():
                 # do this 
-                arrayIndex += currentPiece
+                arrayIndex += int(currentPiece)
                 
-            elif currentPiece.isAlpha():
+            elif currentPiece.isalpha():
                 board_arr[arrayIndex] = piece_dict[currentPiece]
                 arrayIndex += 1
 
             stringIndex += 1
-
+        
+        return board_arr
         
 
