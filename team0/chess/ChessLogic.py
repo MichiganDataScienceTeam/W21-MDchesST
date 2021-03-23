@@ -8,53 +8,67 @@ DEFAULT_WIDTH = 8
 
 WinState = namedtuple('WinState', 'is_ended winner')
 
+def getArrayFromFen(fen):
+    board_arr = np.zeros(64)
+    #fen = self.board.fen()
+    #print(fen)
 
-class Board():
+    # lowercase = black
+    # uppercase = white
+    piece_dict = {
+        "p": chess.PAWN,
+        "n": chess.KNIGHT,
+        "b": chess.BISHOP,
+        "r": chess.ROOK,
+        "q": chess.QUEEN,
+        "k": chess.KING,
+        "P": -1*chess.PAWN,
+        "N": -1*chess.KNIGHT,
+        "B": -1*chess.BISHOP,
+        "R": -1*chess.ROOK,
+        "Q": -1*chess.QUEEN,
+        "K": -1*chess.KING,
+    }
+
+    arrayIndex = 0
+    stringIndex = 0
+    while arrayIndex < 64:
+        currentPiece = fen[stringIndex]
+        # print(currentPiece)
+        if currentPiece.isdigit():
+            # do this 
+            arrayIndex += int(currentPiece)
+            
+        elif currentPiece.isalpha():
+            board_arr[arrayIndex] = piece_dict[currentPiece]
+            arrayIndex += 1
+
+        stringIndex += 1
+    
+    return board_arr
+
+class Board(chess.Board):
     """
-    Chess Board.
+    Chess Board, extended from the chess library board class.
+    This way we can run chess library commands directly but also
+    write custom functions.
+
+    For example, code outside this class can do this:
+        nb = Board()
+        print(nb.get_np_representation())
+        move = chess.Move.from_uci("c2c3")
+        nb.push(move)
+        print(nb.get_np_representation())
+
+    And this will move the pawn from c2 to c3 and print the np array
+    of the associated fen
     """
 
-    def __init__(self):
-        self.board = chess.Board()
+
+
+    # def __init__(self):
+    #     self.board = chess.Board()
 
     def get_np_representation(self):
-        # 64-length array
-
-        # TODO: initialize with all zeros
-        board_arr = np.zeros(64)
-        fen = self.board.fen()
-        print(fen)
-
-        piece_dict = {
-            "p": chess.PAWN,
-            "n": chess.KNIGHT,
-            "b": chess.BISHOP,
-            "r": chess.ROOK,
-            "q": chess.QUEEN,
-            "k": chess.KING,
-            "P": -1*chess.PAWN,
-            "N": -1*chess.KNIGHT,
-            "B": -1*chess.BISHOP,
-            "R": -1*chess.ROOK,
-            "Q": -1*chess.QUEEN,
-            "K": -1*chess.KING,
-        }
-
-        arrayIndex = 0
-        stringIndex = 0
-        while arrayIndex < 64:
-            currentPiece = fen[stringIndex]
-            print(currentPiece)
-            if currentPiece.isdigit():
-                # do this 
-                arrayIndex += int(currentPiece)
-                
-            elif currentPiece.isalpha():
-                board_arr[arrayIndex] = piece_dict[currentPiece]
-                arrayIndex += 1
-
-            stringIndex += 1
-        
-        return board_arr
-        
+        return getArrayFromFen(self.fen())
 
