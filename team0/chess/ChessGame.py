@@ -30,7 +30,7 @@ class ChessGame(Game):
         Returns:
             actionSize: number of all possible actions
         """
-        return 8*8*(8*7+8+9)
+        return 64*64*5
 
     def getNextState(self, board, player, action):
         """
@@ -46,7 +46,29 @@ class ChessGame(Game):
 
         # I don't know what actions are in this
         
+    def getValidMoves(self,board,player):
+      arr = np.zeros((8,8,8,8,5))
+      move_list = list(board.legal_moves)
+      promote_dict = {'q':1,'r':2,'b':3,'n':4} 
 
+      for move in move_list:
+        uci = move.uci()
+        startsquare = uci[:2]
+        startrow = startsquare[0] - 'a'
+        startcol = int(startsquare[1])-1
+
+        endsquare = uci[2:]
+        endrow = endsquare[0] - 'a'
+        endcol = int(endsquare[1])-1
+        
+        if(uci.size()==5): #if it's a promotion
+          p = promote_dict[uci[-1]]
+        else:
+          p = 0
+        
+        arr[startrow][startcol][endrow][endcol][p] = 1
+      
+      return arr.flatten()
 
 
         
