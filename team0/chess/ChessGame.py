@@ -56,7 +56,6 @@ class ChessGame(Game):
         #           e = i - a*2560 * b*320 - c*40 - d*5
 
         # reverse it to get a UCI string
-        #
 
         move_indices = np.unravel_index(action, (8, 8, 8, 8, 5))
         uci_string = ''
@@ -76,11 +75,12 @@ class ChessGame(Game):
             uci_string += z
 
         # copy the board and play the specified move
-        nextboard = copy.deepcopy(board)
+        nextboard = Board()
+        nextboard.get_board_from_np(board)
         next_move = chess.Move.from_uci(uci_string)
         nextboard.push(next_move)
-
-        return nextboard, -player
+        array_rep = nextboard.get_np_representation()
+        return array_rep, -player
 
     def getValidMoves(self, board, player):
         arr = np.zeros((8, 8, 8, 8, 5))
@@ -105,3 +105,57 @@ class ChessGame(Game):
             arr[startrow][startcol][endrow][endcol][p] = 1
 
         return arr.flatten()
+
+    #currently doesn't work. if we multiply by -1 then the pawns start moving in the wrong direction
+    def getCanonicalForm(self, board, player):
+        """
+        Input:
+            board: current board
+            player: current player (1 or -1)
+
+        Returns:
+            canonicalBoard: returns canonical form of board. The canonical form
+                            should be independent of player. For e.g. in chess,
+                            the canonical form can be chosen to be from the pov
+                            of white. When the player is white, we can return
+                            board as is. When the player is black, we can invert
+                            the colors and return the board.
+        """
+        
+        # takes in a numpy array as (board) and returns a numpy array
+        # player -1 is black
+        if player == -1:
+            new_board = Board()
+            new_board.get_board_from_np(board)
+            new_board.mirror()
+            return new_board.get_np_representation()
+        return board
+
+
+
+
+    def getSymmetries(self, board, pi):
+        """
+        Input:
+            board: current board
+            pi: policy vector of size self.getActionSize()
+
+        Returns:
+            symmForms: a list of [(board,pi)] where each tuple is a symmetrical
+                       form of the board and the corresponding pi vector. This
+                       is used when training the neural network from examples.
+        """
+        pass
+
+    def stringRepresentation(self, board):
+        """
+        Input:
+            board: current board
+
+        Returns:
+            boardString: a quick conversion of board to a string format.
+                         Required by MCTS for hashing.
+        """
+        new_board = Board()
+        new_board.get_board_from_np(board)
+        return  getArrayFromFen(new_board.fen())
