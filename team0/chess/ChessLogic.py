@@ -47,6 +47,24 @@ def getArrayFromFen(fen):
     
     return board_arr
 
+def getMoveIndexFromUCI(uci):
+    promote_dict = {'q': 1, 'r': 2, 'b': 3, 'n': 4}
+    startsquare = uci[:2]
+    startrow = startsquare[0] - 'a'
+    startcol = int(startsquare[1])-1
+
+    endsquare = uci[2:]
+    endrow = endsquare[0] - 'a'
+    endcol = int(endsquare[1])-1
+
+    if(uci.size() == 5):  # if it's a promotion
+        p = promote_dict[uci[-1]]
+    else:
+        p = 0
+    
+    flat_index = np.ravel_multi_index((startcol, startrow, endcol, endrow, p), (8, 8, 8, 8, 5))
+    return flat_index
+
 class Board(chess.Board):
     """
     Chess Board, extended from the chess library board class.

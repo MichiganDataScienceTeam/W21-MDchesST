@@ -6,7 +6,6 @@ import numpy as np
 
 from chess import ChessLogic
 
-
 class ChessGame(Game):
     def __init__(self):
         Game.__init__(self)
@@ -83,7 +82,16 @@ class ChessGame(Game):
         return array_rep, -player
 
     def getValidMoves(self, board, player):
+        # player -1 is black
         arr = np.zeros((8, 8, 8, 8, 5))
+        gameBoard = Board()
+        gameBoard.get_board_from_np(board)
+        if player == -1:
+            newFen = gameBoard.fen()
+            newFen.replace('w', 'b', 1)
+            gameBoard.set_fen(newFen)
+
+        
         move_list = list(board.legal_moves)
         promote_dict = {'q': 1, 'r': 2, 'b': 3, 'n': 4}
 
@@ -106,7 +114,6 @@ class ChessGame(Game):
 
         return arr.flatten()
 
-    #currently doesn't work. if we multiply by -1 then the pawns start moving in the wrong direction
     def getCanonicalForm(self, board, player):
         """
         Input:
@@ -159,3 +166,8 @@ class ChessGame(Game):
         new_board = Board()
         new_board.get_board_from_np(board)
         return  getArrayFromFen(new_board.fen())
+
+    def display(board):
+        gameBoard = Board()
+        gameBoard.get_board_from_np(board)
+        print(gameBoard.Unicode)
