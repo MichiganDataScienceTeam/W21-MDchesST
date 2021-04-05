@@ -1,6 +1,7 @@
 from sklearn.preprocessing import LabelBinarizer
 import chess
 import random
+import os
 
 
 def preprocess_moves(moves):
@@ -43,7 +44,7 @@ def xy_split(game, player_white):
     
     
     
-    def display_game(moves, pause):
+def display_game(moves, pause):
     board = chess.Board()
     counter = 0
     try:
@@ -76,3 +77,63 @@ def xy_split(game, player_white):
     
     print(msg)
     return (result, msg, board)
+
+
+
+def generate_random_boards():
+    import os
+    if os.path.exists("./random_data.np"):
+        # return saved random data
+        with open('random_data.npy', 'rb') as f:
+            return np.load(f)
+    else:
+        # Run random game, process move data, save & return array
+        board = chess.Board()
+        board = play_game(board,random_player,random_player)
+        moves = get_move_list_uci(board)
+        data = np.array(preprocess_moves(moves))
+        data = data.reshape(len(data),8,8,13)
+        # Save data as a binary to a .npy file
+        with open('random_data.npy', 'wb') as f:
+            np.save(f, data)
+        
+        
+        
+def random_player(board):
+    move = random.choice(list(board.legal_moves))
+    return move.uci()
+
+def who(player):
+    return "white" if player == chess.WHITE else "black"
+
+def play_game(board, player1, player2):
+    try:
+        while not board.is_game_over(claim_draw=True):
+            if board.turn == chess.WHITE:
+                uci = player1(board)
+            else:
+                uci = player2(board)
+            board.push_uci(uci)
+    except KeyboardInterrupt:
+        return board
+    return board
+
+def get_move_list_uci(board):
+    moves = []
+    while True:
+        try:
+            move = board.peek().uci()
+            board.pop()
+        except IndexError:
+            # once it runs out of items to peek() at, exit loop
+            break
+        moves.append(move)
+    
+    # moves currently listed backwards, reverse list to fix
+    moves.reverse()
+    
+    # Refill board moves so board stays untouched
+    for move in moves:
+        board.push_uci(move)
+    
+    return moves        
