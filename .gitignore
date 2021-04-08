@@ -1,0 +1,11 @@
+team0/__pycache__/Arena.cpython-38.pyc
+team0/__pycache__/Game.cpython-38.pyc
+team0/__pycache__/MCTS.cpython-38.pyc
+team0/__pycache__/NeuralNet.cpython-38.pyc
+team0/__pycache__/utils.cpython-38.pyc
+team0/othello/__pycache__/__init__.cpython-38.pyc
+team0/othello/__pycache__/OthelloGame.cpython-38.pyc
+team0/othello/__pycache__/OthelloLogic.cpython-38.pyc
+team0/othello/__pycache__/OthelloPlayers.cpython-38.pyc
+team0/othello/pytorch/__pycache__/__init__.cpython-38.pyc
+team0/othello/pytorch/__pycache__/NNet.cpython-38.pyc
