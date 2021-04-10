@@ -3,13 +3,11 @@ import logging
 import coloredlogs
 
 from Coach import Coach
-#from othello.OthelloGame import OthelloGame as Game
-#from othello.tensorflow.NNet import NNetWrapper as nn
-from ml_chess.ChessGame import ChessGame as CGame
-from ml_chess.tensorflow.NNet import NNetWrapper as cnn
+from othello.OthelloGame import OthelloGame as Game
+from othello.tensorflow.NNet import NNetWrapper as nn
+#from ml_chess.ChessGame import ChessGame as CGame
+#from ml_chess.tensorflow.NNet import NNetWrapper as cnn
 from utils import *
-# importing the sys module
-import sys
 
 log = logging.getLogger(__name__)
 
@@ -34,21 +32,11 @@ args = dotdict({
 
 
 def main():
+    log.info('Loading %s...', Game.__name__)
+    g = Game(6)
 
-
-  
-# the setrecursionlimit function is
-# used to modify the default recursion
-# limit set by python. Using this, 
-# we can increase the recursion limit
-# to satisfy our needs
-  
-    sys.setrecursionlimit(10**6)
-    log.info('Loading %s...', CGame.__name__)
-    g = CGame()
-
-    log.info('Loading %s...', cnn.__name__)
-    nnet = cnn(g)
+    log.info('Loading %s...', nn.__name__)
+    nnet = nn(g)
 
     if args.load_model:
         log.info('Loading checkpoint "%s/%s"...', args.load_folder_file)

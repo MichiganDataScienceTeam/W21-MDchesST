@@ -3,13 +3,20 @@ import chess
 import copy
 from .ChessLogic import *
 import numpy as np
+import time
 
 #from chess import ChessLogic
+def display(board):
+    gameBoard = Board()
+    gameBoard.get_board_from_np(board)
+    print(gameBoard)
 
 class ChessGame(Game):
     def __init__(self):
         Game.__init__(self)
         self._base_board = Board()
+
+
 
     def getInitBoard(self):
         """
@@ -62,16 +69,21 @@ class ChessGame(Game):
 
         # convert 1 -> a, 2 -> b, etc
         v = str(chr(move_indices[0] + 97))
-        w = str(move_indices[1])
+        w = str(move_indices[1] + 1)
         x = str(chr(move_indices[2] + 97))
-        y = str(move_indices[3])
+        y = str(move_indices[3] + 1)
 
         uci_string = v + w + x + y
+        
+        time.sleep(0.5)
 
         # if there is a pawn promotion, add 5th character to uci
         if move_indices[4] != 0:
+            print(move_indices[4])
             z = str(chr(move_indices[4] + 97))
             uci_string += z
+        
+        print(uci_string)
 
         # copy the board and play the specified move
         nextboard = Board()
@@ -79,33 +91,34 @@ class ChessGame(Game):
         next_move = chess.Move.from_uci(uci_string)
         nextboard.push(next_move)
         array_rep = nextboard.get_np_representation()
+        display(array_rep)
         return array_rep, -player
 
     def getValidMoves(self, board, player):
-        # player -1 is black
+        # player 1 is black
         arr = np.zeros((8, 8, 8, 8, 5))
         gameBoard = Board()
         gameBoard.get_board_from_np(board)
-        if player == -1:
+        if player == 1:
             newFen = gameBoard.fen()
             newFen.replace('w', 'b', 1)
             gameBoard.set_fen(newFen)
 
         
-        move_list = list(board.legal_moves)
+        move_list = list(gameBoard.legal_moves)
         promote_dict = {'q': 1, 'r': 2, 'b': 3, 'n': 4}
 
         for move in move_list:
             uci = move.uci()
             startsquare = uci[:2]
-            startrow = startsquare[0] - 'a'
-            startcol = int(startsquare[1])-1
+            startrow = ord(startsquare[0]) - ord('a')
+            startcol = int(startsquare[1]) - 1
 
             endsquare = uci[2:]
-            endrow = endsquare[0] - 'a'
-            endcol = int(endsquare[1])-1
+            endrow = ord(endsquare[0]) - ord('a')
+            endcol = int(endsquare[1]) - 1
 
-            if(uci.size() == 5):  # if it's a promotion
+            if(len(uci) == 5):  # if it's a promotion
                 p = promote_dict[uci[-1]]
             else:
                 p = 0
@@ -130,16 +143,13 @@ class ChessGame(Game):
         """
         
         # takes in a numpy array as (board) and returns a numpy array
-        # player -1 is black
-        if player == -1:
+        # player 1 is black
+        if player == 1:
             new_board = Board()
             new_board.get_board_from_np(board)
             new_board.mirror()
             return new_board.get_np_representation()
         return board
-
-
-
 
     def getSymmetries(self, board, pi):
         """
@@ -152,7 +162,7 @@ class ChessGame(Game):
                        form of the board and the corresponding pi vector. This
                        is used when training the neural network from examples.
         """
-        pass
+        return []
 
     def stringRepresentation(self, board):
         """
@@ -165,9 +175,25 @@ class ChessGame(Game):
         """
         new_board = Board()
         new_board.get_board_from_np(board)
-        return  getArrayFromFen(new_board.fen())
+        return  str(getArrayFromFen(new_board.fen()))
 
-    def display(board):
-        gameBoard = Board()
-        gameBoard.get_board_from_np(board)
-        print(gameBoard.Unicode)
+    def getGameEnded(self, board, player):
+        # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
+        # player = 1
+        #print(board)
+        b = Board()
+        #print(b)
+        b.get_board_from_np(board)
+        #print(b)
+        #print(
+        #b = b.get_board_from_np(board)
+
+        if b.is_game_over():
+            if b.outcome().winner == chess.WHITE:
+                return 1
+            else:
+                return -1
+        else:
+            return 0
+
+    

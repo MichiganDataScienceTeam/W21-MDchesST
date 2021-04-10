@@ -9,3 +9,5 @@ team0/othello/__pycache__/OthelloLogic.cpython-38.pyc
 team0/othello/__pycache__/OthelloPlayers.cpython-38.pyc
 team0/othello/pytorch/__pycache__/__init__.cpython-38.pyc
 team0/othello/pytorch/__pycache__/NNet.cpython-38.pyc
+*.pyc
+team0/env/

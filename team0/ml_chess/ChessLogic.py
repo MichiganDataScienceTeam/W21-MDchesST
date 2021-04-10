@@ -89,11 +89,15 @@ class Board(chess.Board):
 
     def get_board_from_np(self, np_array):
         self.clear_board()
-        for idx, square in np.ndenumerate(np_array):
+        for idx, piece in enumerate(np_array):
             # set_piece_at(square: chess.Square, piece: Optional[chess.Piece], promoted: bool = False) 
             #sets piece type and color at positiond idx
-            if square != 0:
-                self.set_piece_at(idx, piece = chess.Piece(abs(square), square/abs(square)))
+            if piece != 0:
+                # NEGATIVE NUMBERS ARE WHITE
+                color = chess.BLACK
+                if piece < 0:
+                    color = chess.WHITE
+                self.set_piece_at(int(idx), piece = chess.Piece(int(abs(piece)), color))
             
 
 
