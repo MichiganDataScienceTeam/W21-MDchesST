@@ -75,23 +75,29 @@ class ChessGame(Game):
 
         uci_string = v + w + x + y
         
-        time.sleep(0.5)
+        #time.sleep(0.5)
 
         # if there is a pawn promotion, add 5th character to uci
+        promote_dict = {1: 'q',  2: 'r',  3: 'b',  4: 'n'}
         if move_indices[4] != 0:
-            print(move_indices[4])
-            z = str(chr(move_indices[4] + 97))
+            #print(move_indices[4])
+            z = promote_dict[move_indices[4]]
             uci_string += z
         
-        print(uci_string)
+        #print(uci_string)
 
         # copy the board and play the specified move
         nextboard = Board()
         nextboard.get_board_from_np(board)
         next_move = chess.Move.from_uci(uci_string)
+        if player == 1:
+            nextboard.turn = chess.BLACK
+        else:
+            nextboard.turn = chess.WHITE
         nextboard.push(next_move)
         array_rep = nextboard.get_np_representation()
         display(array_rep)
+        print('\n')
         return array_rep, -player
 
     def getValidMoves(self, board, player):
@@ -147,7 +153,7 @@ class ChessGame(Game):
         if player == 1:
             new_board = Board()
             new_board.get_board_from_np(board)
-            new_board.mirror()
+            new_board = new_board.mirror()
             return new_board.get_np_representation()
         return board
 
